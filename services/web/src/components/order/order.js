@@ -17,7 +17,6 @@ import "./styles.css";
 
 import React from "react";
 import PropTypes from "prop-types";
-import { RollbackOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import {
   Layout,
@@ -27,16 +26,11 @@ import {
   Row,
   Col,
   Card,
-  Button,
-  Typography,
-  Divider,
-  Modal,
-  Table,
+  Divider
 } from "antd";
 import { formatDateFromIso } from "../../utils";
 
 const { Content } = Layout;
-const { Meta } = Card;
 
 const Order = (props) => {
   const { order, history } = props;

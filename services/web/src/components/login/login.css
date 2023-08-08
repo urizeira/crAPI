@@ -35,3 +35,11 @@
 .form-button{
   width: 100%;
 }
+
+.auth0-auth-button { 
+  margin: auto; 
+  display: flex; 
+  justify-content: center; 
+  padding: 25px; 
+  cursor: pointer; 
+}

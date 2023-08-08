@@ -29,6 +29,7 @@ import {authInterceptor} from "./middleware";
 import rootReducer from "./reducers/rootReducer";
 import rootSaga from "./sagas";
 import Layout from "./components/layout/layout";
+import Auth0ProviderWithScope from './auth/auth0-provider-with-scope';
 import * as serviceWorker from "./serviceWorker";
 
 const sagaMiddleware = createSagaMiddleware();
@@ -65,7 +66,9 @@ const AppProvider = () => {
   return (
     <Provider store={store}>
       <Router>
-        <Layout />
+        <Auth0ProviderWithScope>
+          <Layout />
+        </Auth0ProviderWithScope>
       </Router>
     </Provider>
   );

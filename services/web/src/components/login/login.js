@@ -23,6 +23,8 @@ import { UserOutlined } from "@ant-design/icons";
 import { EMAIL_VALIDATION } from "../../constants/constants";
 import { EMAIL_REQUIRED } from "../../constants/messages";
 
+import Auth0AuthenticationButton from '../auth0/auth0AuthenticationButton';
+
 /**
  * login component for users
  */
@@ -74,6 +76,9 @@ const Login = (props) => {
             <Button type="primary" htmlType="submit" className="form-button">
               Login
             </Button>
+            <div className="auth0-auth-button">
+              <Auth0AuthenticationButton/>
+            </div>
             <button
               className="alternative-style"
               onClick={() => history.push("/signup")}

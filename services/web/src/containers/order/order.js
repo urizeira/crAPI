@@ -17,9 +17,9 @@ import React, { useEffect } from "react";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Modal, Avatar } from "antd";
+import { Modal } from "antd";
 import Order from "../../components/order/order";
-import { getOrderByIdAction, returnOrderAction } from "../../actions/shopActions";
+import { getOrderByIdAction } from "../../actions/shopActions";
 import responseTypes from "../../constants/responseTypes";
 import { FAILURE_MESSAGE } from "../../constants/messages";
   

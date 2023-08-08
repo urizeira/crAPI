@@ -14,6 +14,7 @@
  */
 
 import actionTypes from "../constants/actionTypes";
+import roleTypes from "../constants/roleTypes";
 
 const initialData = {
   fetchingData: false,
@@ -49,6 +50,18 @@ const userReducer = (state = initialData, action) => {
         email: action.payload.user.email,
         number: action.payload.user.number,
         role: action.payload.user.role,
+      };
+    case actionTypes.THIRD_PARTY_LOGED_IN:
+      return {
+        ...state,
+        fetchingData: false,
+        isLoggedIn: true,
+        accessToken: action.token,
+        role: roleTypes.ROLE_USER,
+        id: action.user.id,
+        name: action.user.name,
+        email: action.user.email,
+        number: action.user.number
       };
     case actionTypes.FETCHED_USER:
       return {

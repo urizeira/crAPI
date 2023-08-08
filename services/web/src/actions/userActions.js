@@ -24,6 +24,24 @@ export const logInUserAction = ({ email, password, callback }) => {
   };
 };
 
+export const logedInUserAction = ({ token, user, callback }) => {
+  return {
+    type: actionTypes.LOGGED_IN,
+    token,
+    user,
+    callback,
+  };
+};
+
+export const thirdPartyLogedInUserAction = ({ token, user, callback }) => {
+  return {
+    type: actionTypes.THIRD_PARTY_LOGED_IN,
+    token,
+    user,
+    callback,
+  };
+};
+
 export const signUpUserAction = ({
   name,
   email,
