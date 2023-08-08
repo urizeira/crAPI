@@ -90,7 +90,21 @@ public class JwtProvider {
         .signWith(SignatureAlgorithm.RS256, this.keyPair.getPrivate())
         .compact();
   }
-
+  public String getClaimFromJwtToken(String token,String claim) throws ParseException {
+    // Parse without verifying token signature
+    if (token == null || token.isEmpty()) {
+      return null;
+    }
+    Object claimObject = JWTParser.parse(token).getJWTClaimsSet().getClaim(claim);
+    if (claimObject == null) {
+      return null;
+    }
+    String claimValue = String.valueOf(JWTParser.parse(token).getJWTClaimsSet().getClaim(claim));
+    if (claimValue == null || claimValue.isEmpty()) {
+      return null;
+    }
+    return String.valueOf(JWTParser.parse(token).getJWTClaimsSet().getClaim(claim));
+  }
   /**
    * @param token
    * @return username from JWT Token

@@ -20,10 +20,12 @@ import com.crapi.config.JwtAuthTokenFilter;
 import com.crapi.config.JwtProvider;
 import com.crapi.constant.UserMessage;
 import com.crapi.entity.*;
+import com.crapi.enums.ERole;
 import com.crapi.enums.EStatus;
 import com.crapi.exception.EntityNotFoundException;
 import com.crapi.model.*;
 import com.crapi.repository.*;
+import com.crapi.service.UserRegistrationService;
 import com.crapi.service.UserService;
 import com.crapi.utils.EmailTokenGenerator;
 import com.crapi.utils.MailBody;
@@ -31,6 +33,8 @@ import com.crapi.utils.SMTPMailServer;
 import java.text.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+
+import com.crapi.utils.UserData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.impl.Log4jContextFactory;
@@ -44,11 +48,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
   static final Log4jContextFactory log4jContextFactory = new Log4jContextFactory();
   private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+  public static final String AUTH_ZERO_USER_PHONE_NUMBER = "55555555555";
+  public static final String DETAILS_EMAIL = "details-email";
+  public static final String DETAILS_NAME = "details-name";
   private static org.apache.logging.log4j.Logger LOG4J_LOGGER;
 
   @Autowired ChangeEmailRepository changeEmailRepository;
@@ -68,6 +76,7 @@ public class UserServiceImpl implements UserService {
   @Autowired JwtProvider jwtProvider;
 
   @Autowired AuthenticationManager authenticationManager;
+
 
   public UserServiceImpl() {
     setFactory(log4jContextFactory);
@@ -331,19 +340,74 @@ public class UserServiceImpl implements UserService {
     try {
       String jwt = jwtAuthTokenFilter.getJwt(request);
       String username = jwtProvider.getUserNameFromJwtToken(jwt);
-      if (username != null && !username.equalsIgnoreCase(EStatus.INVALID.toString())) {
-        user = userRepository.findByEmail(username);
+      String authZeroUserName = jwtProvider.getClaimFromJwtToken(jwt, DETAILS_EMAIL);;
+      boolean isAuthZeroUser =  authZeroUserName != null && !authZeroUserName.equalsIgnoreCase(EStatus.INVALID.toString());
+      if (isAuthZeroUser){
+         username = authZeroUserName;
       }
 
-      if (user != null) {
-        return user;
-      } else {
-        throw new EntityNotFoundException(User.class, "userEmail", username);
+      if (username!= null && !username.equalsIgnoreCase(EStatus.INVALID.toString())) {
+        user = userRepository.findByEmail(username);
+        if (user != null) {
+          return user;
+        } else if (isAuthZeroUser) {
+          logger.info("User not found in DB, registering  an Auth0 user");
+          String name = jwtProvider.getClaimFromJwtToken(jwt, DETAILS_NAME);
+          return handleAuthZeroAuthentication(jwt, username, name);
+        }
+        logger.warn("User not found in DB, and this is not auth0 user");
       }
+      throw new EntityNotFoundException(User.class, "userEmail", username);
+
+
+
     } catch (ParseException exception) {
       logger.error("fail to get username from token -> Message:%d", exception);
       throw new EntityNotFoundException(User.class, "userEmail");
     }
+  }
+
+  private User handleAuthZeroAuthentication(String jwt,String username, String name) {
+    User user;
+    if (jwt != null && username != null) {
+      user = createAuthZeroUser(jwt, username);
+      if ( user != null ){
+
+        saveUserEntities(username,name, user);
+        return user;
+      }
+    }
+    return null;
+  }
+  @Transactional
+
+  private void saveUserEntities(String username,String name, User user) {
+    if (user == null){
+      throw new IllegalArgumentException("User cannot be null");
+    }
+
+    UserData userData = new UserData();
+    UserDetails userDetails = null;
+    user = userRepository.save(user);
+    userDetails = userData.getPredefineUser(username, user);
+    if (userDetails != null) {
+      userDetails.setName(name);
+      userRepository.save(user);
+      userDetailsRepository.save(userDetails);
+      logger.info("User Details Created successful with userId {}", userDetails.getId());
+    }
+  }
+
+  private User createAuthZeroUser(String jwt, String username) {
+    User user;
+    user =
+            new User(
+                    username,
+                    AUTH_ZERO_USER_PHONE_NUMBER,
+                    null,
+                    ERole.ROLE_USER);
+    user.setJwtToken(jwt);
+    return user;
   }
 
   /**
