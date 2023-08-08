@@ -60,8 +60,3 @@ export const requestURLS = {
   ADD_COMMENT: "api/v2/community/posts/<postId>/comment",
   VALIDATE_COUPON: "api/v2/coupon/validate-coupon",
 };
-
-export const auth0 = {
-  socpe: 'read:current_user profile email',
-  audience: `https://crapi-api.com`
-}

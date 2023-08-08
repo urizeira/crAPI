@@ -45,7 +45,7 @@ import PostContainer from "../../containers/post/post";
 
 import { logOutUserAction, thirdPartyLogedInUserAction } from "../../actions/userActions";
 import { isAccessTokenValid } from "../../utils";
-import { auth0 as Auth0Constant } from "../../constants/APIConstant";
+import auth0Constant from "../../constants/Auth0Constant";
 
 const { Content } = Layout;
 
@@ -127,8 +127,8 @@ const LoginCallback = ({
       try {
         const accessToken = await getAccessTokenSilently({
           authorizationParams: {
-            audience: Auth0Constant.audience,
-            scope: Auth0Constant.socpe,
+            audience: auth0Constant.AUDIENCE,
+            scope: auth0Constant.SOCPE,
           },
         });
         thirdPartyLogedInUser({ token: accessToken, user: user });

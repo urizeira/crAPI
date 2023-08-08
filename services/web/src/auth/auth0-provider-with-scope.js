@@ -1,15 +1,14 @@
 import React from "react";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { withRouter } from "react-router-dom";
-import { auth0 } from "../constants/APIConstant";
+import auth0Constant from "../constants/Auth0Constant";
 
 class Auth0ProviderWithScope extends React.Component {
-    domain = process.env.REACT_APP_AUTH0_DOMAIN;
-    clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+    domain = auth0Constant.DOMAIN;
+    clientId = auth0Constant.CLIENT_ID;
     redirectUri = `${window.location.origin}/login-callback`;
 
     render() {
-        debugger
         return (
             <Auth0Provider
                 domain={this.domain}
@@ -17,8 +16,8 @@ class Auth0ProviderWithScope extends React.Component {
                 redirectUri={this.redirectUri}
                 authorizationParams={{
                     redirect_uri: this.redirectUri,
-                    audience: auth0.audience,
-                    scope: auth0.socpe
+                    audience: auth0Constant.AUDIENCE,
+                    scope: auth0Constant.SOCPE
                 }}
                 >
                 {this.props.children}
