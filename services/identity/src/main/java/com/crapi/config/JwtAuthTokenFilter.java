@@ -91,12 +91,14 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
    */
   public String getUserFromToken(HttpServletRequest request) throws ParseException {
     String jwt = getJwt(request);
+    if (jwt != null) {
+      String authZeroUsername = tokenProvider.getClaimFromJwtToken(jwt, DETAILS_EMAIL);
+      if (authZeroUsername != null) return authZeroUsername;
+    }
     if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
       String username = tokenProvider.getUserNameFromJwtToken(jwt);
-      String authZeroUsername = tokenProvider.getClaimFromJwtToken(jwt, DETAILS_EMAIL);
       // checking username from token
       if (username != null) return username;
-      if (authZeroUsername != null) return authZeroUsername;
     }
     return EStatus.INVALID.toString();
   }

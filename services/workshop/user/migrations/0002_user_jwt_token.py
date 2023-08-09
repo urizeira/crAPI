@@ -23,8 +23,7 @@ class Migration(migrations.Migration):
 
     operations = [
                 migrations.RunSQL(
-                    "ALTER TABLE user_login ALTER COLUMN jwt_token TYPE VARCHAR(1500);
-"
+                    "ALTER TABLE user_login ALTER COLUMN jwt_token TYPE VARCHAR(1500);"
                 ),
 
     ]
