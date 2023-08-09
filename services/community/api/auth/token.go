@@ -81,20 +81,44 @@ func ExtractTokenID(r *http.Request, db *gorm.DB) (uint32, error) {
 		return 0, err
 	}
 
-	if ok && tokenValid {
-		name := claims["sub"]
-		if name != nil {
-			//converting name interface to string
-			email := fmt.Sprintf("%v", name)
-			// checking username in postgres databse.
-			err := CheckTokenInDB(email, db)
-			return 0, err
-		}
-		var uid uint32
-		return uint32(uid), nil
-	}
+	
 
-	return 0, errors.New("Unauthorized")
+	if ok && tokenValid {
+		// Check "sub" claim
+		name, okSub := claims["sub"]
+		
+		// If "sub" claim isn't present or is nil, check "details-email" claim
+		if !okSub || name == nil {
+			log.Println("Claim 'sub' not found or nil, checking 'details-email'")
+			name, _ = claims["details-email"]
+		}
+		
+		// If name is found in either "sub" or "details-email"
+		if name != nil {
+			// converting name interface to string
+			email := fmt.Sprintf("%v", name)
+			log.Printf("Using email: %s", email)
+			
+			// checking username in postgres database.
+			log.Println("Checking token in the database...")
+			err := CheckTokenInDB(email, db)
+			if err != nil {
+				log.Printf("Error checking token in database: %v", err)
+			}
+			return 0, err
+		} else {
+			log.Println("Neither 'sub' nor 'details-email' provided a valid name.")
+		}
+		
+		var uid uint32
+		log.Println("Returning default UID.")
+		return uint32(uid), nil
+	} else {
+		log.Println("Token either not OK or not valid.")
+	}
+	
+
+	return 0, errors.New("UnauthorizedX")
 }
 
 // CheckTokenInDB call FindUserByEmail and check that email in postgres database

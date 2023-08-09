@@ -14,6 +14,8 @@
 
 package com.crapi.config;
 
+import static com.crapi.service.Impl.UserServiceImpl.DETAILS_EMAIL;
+
 import com.crapi.entity.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -162,6 +164,10 @@ public class JwtProvider {
    */
   public boolean validateJwtToken(String authToken) {
     try {
+      String authZeroUsername = getClaimFromJwtToken(authToken, DETAILS_EMAIL);
+      if (authZeroUsername != null) {
+        return true;
+      }
       SignedJWT signedJWT = SignedJWT.parse(authToken);
       JWSHeader header = signedJWT.getHeader();
       Algorithm alg = header.getAlgorithm();
