@@ -14,6 +14,8 @@
 
 package com.crapi.config;
 
+import static com.crapi.service.Impl.UserServiceImpl.DETAILS_EMAIL;
+
 import com.crapi.enums.EStatus;
 import com.crapi.service.Impl.UserDetailsServiceImpl;
 import java.io.IOException;
@@ -91,8 +93,10 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     String jwt = getJwt(request);
     if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
       String username = tokenProvider.getUserNameFromJwtToken(jwt);
+      String authZeroUsername = tokenProvider.getClaimFromJwtToken(jwt, DETAILS_EMAIL);
       // checking username from token
       if (username != null) return username;
+      if (authZeroUsername != null) return authZeroUsername;
     }
     return EStatus.INVALID.toString();
   }
