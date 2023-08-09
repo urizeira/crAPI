@@ -90,8 +90,14 @@ public class JwtProvider {
         .signWith(SignatureAlgorithm.RS256, this.keyPair.getPrivate())
         .compact();
   }
-  public String getClaimFromJwtToken(String token,String claim) throws ParseException {
-    // Parse without verifying token signature
+
+  /**
+   * @param token
+   * @param claim
+   * @return
+   * @throws ParseException
+   */
+  public String getClaimFromJwtToken(String token, String claim) throws ParseException {
     if (token == null || token.isEmpty()) {
       return null;
     }
