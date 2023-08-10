@@ -2,5 +2,8 @@ export const crapienv = {
     JAVA_MICRO_SERVICES: "identity/",
     PYTHON_MICRO_SERVICES: "workshop/",
     GO_MICRO_SERVICES: "community/",
+    AUTH0_DOMAIN: "dev-w5msyikyezkd4s4f.us.auth0.com",
+    AUTH0_CLIENT_ID: "rQf2kqPkWsiVErSpqfFEWuOH9YfOQuzf",
+    AUTH0_REQUEST_SOCPES: "read:current_user profile email",
+    AUTH0_REQUEST_AUDIENCE: "https://crapi-api.com"
 };
-

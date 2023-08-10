@@ -15,13 +15,15 @@
 
 import "./layout.css";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { Layout, Spin } from "antd";
 import { connect } from "react-redux";
+import { withAuth0 } from "@auth0/auth0-react";
+
 import LoginContainer from "../../containers/login/login";
 import SignupContainer from "../../containers/signup/signup";
 import NavBar from "../navBar/navBar";
@@ -41,8 +43,9 @@ import ForumContainer from "../../containers/forum/forum";
 import NewPostContainer from "../../containers/newPost/newPost";
 import PostContainer from "../../containers/post/post";
 
-import { logOutUserAction } from "../../actions/userActions";
+import { logOutUserAction, thirdPartyLogedInUserAction } from "../../actions/userActions";
 import { isAccessTokenValid } from "../../utils";
+import auth0Constant from "../../constants/Auth0Constant";
 
 const { Content } = Layout;
 
@@ -60,7 +63,6 @@ const AfterLogin = ({
   ...rest
 }) => {
   const hasUserLoggedIn = isLoggedIn;
-
   return (
     <Route
       {...rest}
@@ -114,12 +116,55 @@ AfterLogin.propTypes = {
   logOutUser: PropTypes.func,
 };
 
+const LoginCallback = ({
+  auth0,
+  thirdPartyLogedInUser
+}) => {
+  const { isLoading, isAuthenticated, getAccessTokenSilently, user } = auth0;
+
+  useEffect(() => {
+    const getUserMetadata = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: auth0Constant.AUDIENCE,
+            scope: auth0Constant.SOCPE,
+          },
+        });
+        thirdPartyLogedInUser({ token: accessToken, user: user });
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+
+    if (isAuthenticated) {
+      getUserMetadata();
+    }
+  });
+
+  if (isLoading) {
+    return <Spin></Spin>;
+  }
+  else if (isAuthenticated) {
+    return <Redirect to={{ pathname: "/", state: { from: '/login-callback' } }} />
+  }
+  else {
+    return <Redirect to={{ pathname: "/login", state: { from: '/login-callback' } }} />
+  }
+}
+
+LoginCallback.propTypes = {
+  auth0: PropTypes.any,
+  logedInUser: PropTypes.func
+};
+
 /*
  * function to redirect to login if the user is not logged in
  * and tries to open dashboard or other pages where log in is required
  */
 const BeforeLogin = ({ component: Component, isLoggedIn, ...rest }) => {
   const hasUserLoggedIn = isLoggedIn;
+
   return (
     <Route
       {...rest}
@@ -152,6 +197,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = {
   logOutUser: logOutUserAction,
+  thirdPartyLogedInUser: thirdPartyLogedInUserAction
 };
 
 /**
@@ -163,11 +209,9 @@ const StyledComp = connect(
   mapDispatchToProps
 )((props) => {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-
   function handleResize() {
     setWindowHeight(window.innerHeight);
   }
-
   window.addEventListener("resize", handleResize);
 
   return (
@@ -176,6 +220,10 @@ const StyledComp = connect(
         <Route path="/" component={NavBar} />
         <Content className="layout-content">
           <Switch>
+            <Route
+              path="/login-callback"
+              render={() => withAuth0(LoginCallback)({ ...props })}
+            />
             <BeforeLogin
               path="/login"
               component={LoginContainer}
@@ -310,13 +358,12 @@ const StyledComp = connect(
                 return (
                   <Redirect
                     to={{
-                      pathname: `${
-                        !props.isLoggedIn
-                          ? "/login"
-                          : props.role === roleTypes.ROLE_USER
+                      pathname: `${!props.isLoggedIn
+                        ? "/login"
+                        : props.role === roleTypes.ROLE_USER
                           ? "/dashboard"
                           : "/mechanic-dashboard"
-                      }`,
+                        }`,
                       state: { from: props.location },
                     }}
                   />
@@ -336,4 +383,4 @@ StyledComp.propTypes = {
   fetchingData: PropTypes.bool,
 };
 
-export default StyledComp;
+export default withAuth0(StyledComp);

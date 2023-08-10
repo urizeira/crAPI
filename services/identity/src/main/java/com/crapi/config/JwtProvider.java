@@ -14,6 +14,8 @@
 
 package com.crapi.config;
 
+import static com.crapi.service.Impl.UserServiceImpl.DETAILS_EMAIL;
+
 import com.crapi.entity.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -93,6 +95,26 @@ public class JwtProvider {
 
   /**
    * @param token
+   * @param claim
+   * @return
+   * @throws ParseException
+   */
+  public String getClaimFromJwtToken(String token, String claim) throws ParseException {
+    if (token == null || token.isEmpty()) {
+      return null;
+    }
+    Object claimObject = JWTParser.parse(token).getJWTClaimsSet().getClaim(claim);
+    if (claimObject == null) {
+      return null;
+    }
+    String claimValue = String.valueOf(JWTParser.parse(token).getJWTClaimsSet().getClaim(claim));
+    if (claimValue == null || claimValue.isEmpty()) {
+      return null;
+    }
+    return String.valueOf(JWTParser.parse(token).getJWTClaimsSet().getClaim(claim));
+  }
+  /**
+   * @param token
    * @return username from JWT Token
    */
   public String getUserNameFromJwtToken(String token) throws ParseException {
@@ -142,6 +164,10 @@ public class JwtProvider {
    */
   public boolean validateJwtToken(String authToken) {
     try {
+      String authZeroUsername = getClaimFromJwtToken(authToken, DETAILS_EMAIL);
+      if (authZeroUsername != null) {
+        return true;
+      }
       SignedJWT signedJWT = SignedJWT.parse(authToken);
       JWSHeader header = signedJWT.getHeader();
       Algorithm alg = header.getAlgorithm();
