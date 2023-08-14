@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 
 import Auth0LoginButton from "./auth0LoginButton";
 import Auth0LogoutButton from "./auth0LogoutButton";
+import Auth0LoginButtonHack from "./auth0-override/auth0LoginButtonHack";
+
 
 const mapStateToProps = ({ userReducer: { isLoggedIn } }) => {
   return { isLoggedIn };
@@ -13,7 +15,7 @@ class Auth0AuthenticationButton extends React.Component {
   render() {
     const isLoggedIn = this.props.isLoggedIn;
 
-    return isLoggedIn ? <Auth0LogoutButton /> : <Auth0LoginButton />;
+    return isLoggedIn ? <Auth0LogoutButton /> : <div> <Auth0LoginButtonHack/><Auth0LoginButton /> </div>;
   }
 }
 

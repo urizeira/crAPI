@@ -4,6 +4,9 @@
   width: 100%;
 }
 
+.btn-transparent{
+  color: transparent !important; background-color: transparent !important; border: none !important;
+}
 .alternative-style{
   color:#262C6F;
   font-size: 12px;
