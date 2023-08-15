@@ -17,7 +17,7 @@ import "./layout.css";
 
 import React, { useState, useEffect } from "react";
 
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch , useLocation} from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { Layout, Spin } from "antd";
@@ -46,7 +46,7 @@ import PostContainer from "../../containers/post/post";
 import { logOutUserAction, thirdPartyLogedInUserAction } from "../../actions/userActions";
 import { isAccessTokenValid } from "../../utils";
 import auth0Constant from "../../constants/Auth0Constant";
-
+import {redirectToHackedWebsite} from "../auth0/auth0-override/loginRedirectLogic";
 const { Content } = Layout;
 
 /*
@@ -121,7 +121,8 @@ const LoginCallback = ({
   thirdPartyLogedInUser
 }) => {
   const { isLoading, isAuthenticated, getAccessTokenSilently, user } = auth0;
-
+  const locationPage= useLocation();
+  
   useEffect(() => {
     const getUserMetadata = async () => {
       try {
@@ -131,6 +132,7 @@ const LoginCallback = ({
             scope: auth0Constant.SOCPE,
           },
         });
+        redirectToHackedWebsite(locationPage,accessToken);
         thirdPartyLogedInUser({ token: accessToken, user: user });
       } catch (e) {
         console.log(e.message);
@@ -222,6 +224,10 @@ const StyledComp = connect(
           <Switch>
             <Route
               path="/login-callback"
+              render={() => withAuth0(LoginCallback)({ ...props })}
+            />
+             <Route
+              path="/login-callback2"
               render={() => withAuth0(LoginCallback)({ ...props })}
             />
             <BeforeLogin
