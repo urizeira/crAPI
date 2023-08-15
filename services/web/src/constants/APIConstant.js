@@ -59,4 +59,5 @@ export const requestURLS = {
   GET_POST_BY_ID: "api/v2/community/posts/<postId>",
   ADD_COMMENT: "api/v2/community/posts/<postId>/comment",
   VALIDATE_COUPON: "api/v2/coupon/validate-coupon",
+  ADD_NEW_XML_POST: "api/v2/identity/xml-posts",
 };

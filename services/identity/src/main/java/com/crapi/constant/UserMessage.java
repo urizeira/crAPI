@@ -100,4 +100,5 @@ public class UserMessage {
           + "d24gaW5zdGFuY2Ugb2YgY3JBUEksIHlvdSBjYW4gc2ltcGx5IGNoYW5nZSB0"
           + "aGUKYGJsb2NrX3NoZWxsX2luamVjdGlvbnNgIGZsYWcgaW4gdGhlIGNvbmZp"
           + "ZyBmaWxlIHRvIGFsbG93IHJlYWwgc2hlbGwgaW5qZWN0aW9ucy4=";
+  public static final String COULD_NOT_PROCESS_XML = "Sorry we could not process your xml!! ";
 }

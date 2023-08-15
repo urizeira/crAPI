@@ -97,3 +97,5 @@ export const NO_MECHANICS = "Could not get mechanic details";
 export const SERVICE_REQUEST_SENT = "Service Request sent to the mechanic";
 export const SERVICE_REQUEST_NOT_SENT = "Could not contact mechanic";
 export const LOC_NOT_REFRESHED = "Could not refresh location";
+export const XML_POST_CREATED = "XML processed successfuly.";
+export const XML_POST_NOT_CREATED = "Could not process your request";

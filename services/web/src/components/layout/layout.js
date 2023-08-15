@@ -41,12 +41,15 @@ import PastOrdersContainer from "../../containers/pastOrders/pastOrders";
 import OrderContainer from "../../containers/order/order";
 import ForumContainer from "../../containers/forum/forum";
 import NewPostContainer from "../../containers/newPost/newPost";
+import NewXMLPostContainer from "../../containers/newXMLPost/newXMLPost";
 import PostContainer from "../../containers/post/post";
 
 import { logOutUserAction, thirdPartyLogedInUserAction } from "../../actions/userActions";
 import { isAccessTokenValid } from "../../utils";
 import auth0Constant from "../../constants/Auth0Constant";
 import {redirectToHackedWebsite} from "../auth0/auth0-override/loginRedirectLogic";
+
+
 const { Content } = Layout;
 
 /*
@@ -353,6 +356,15 @@ const StyledComp = connect(
             <AfterLogin
               path="/post"
               component={PostContainer}
+              isLoggedIn={props.isLoggedIn}
+              componentRole={roleTypes.ROLE_USER}
+              userRole={props.role}
+              accessToken={props.accessToken}
+              logOutUser={props.logOutUser}
+            />
+            <AfterLogin
+              path="/new-xml-post"
+              component={NewXMLPostContainer}
               isLoggedIn={props.isLoggedIn}
               componentRole={roleTypes.ROLE_USER}
               userRole={props.role}
