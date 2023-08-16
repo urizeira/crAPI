@@ -32,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService {
   private static final Logger logger = LoggerFactory.getLogger(UserRegistrationServiceImpl.class);
@@ -86,13 +88,20 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
       return new CRAPIResponse(
           UserMessage.EMAIL_ALREADY_REGISTERED + signUpRequest.getEmail(), 403);
     }
-    // Register new user in Database
     user =
         new User(
             signUpRequest.getEmail(),
             signUpRequest.getNumber(),
             encoder.encode(signUpRequest.getPassword()),
             ERole.ROLE_USER);
+    if (signUpRequest.getRole() != null) {
+      Optional<ERole> requestedRole = ERole.valueOfName(signUpRequest.getRole());
+      if (requestedRole.isPresent()) {
+        user.setRole(requestedRole.get());
+      }
+    }
+    // Register new user in Database
+
     user = userRepository.save(user);
     if (user != null) {
       logger.info("User registered successful with userId {}", user.getId());
