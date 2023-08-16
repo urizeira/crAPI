@@ -249,6 +249,15 @@ const StyledComp = connect(
               isLoggedIn={props.isLoggedIn}
             />
             <AfterLogin
+              path="/dashboard-admin"
+              component={DashboardContainer}
+              isLoggedIn={props.isLoggedIn}
+              componentRole={roleTypes.ROLE_ADMIN}
+              userRole={props.role}
+              accessToken={props.accessToken}
+              logOutUser={props.logOutUser}
+            />
+               <AfterLogin
               path="/dashboard"
               component={DashboardContainer}
               isLoggedIn={props.isLoggedIn}
