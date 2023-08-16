@@ -25,14 +25,13 @@ import com.crapi.service.UserRegistrationService;
 import com.crapi.service.VehicleService;
 import com.crapi.utils.MailBody;
 import com.crapi.utils.SMTPMailServer;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService {
