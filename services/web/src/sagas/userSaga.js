@@ -132,16 +132,16 @@ export function* forgotPassword(param) {
   let recievedResponse = {};
   try {
     yield put({ type: actionTypes.FETCHING_DATA });
-    const postUrl =
-      APIService.JAVA_MICRO_SERVICES + requestURLS.FORGOT_PASSWORD;
+    const getUrl =
+      APIService.JAVA_MICRO_SERVICES + requestURLS.FORGOT_PASSWORD +"?email="+email;
     const headers = {
       "Content-Type": "application/json",
     };
 
-    const responseJSON = yield fetch(postUrl, {
+    const responseJSON = yield fetch(getUrl, {
       headers,
-      method: "POST",
-      body: JSON.stringify({ email }),
+      method: "GET"
+      
     }).then((response) => {
       recievedResponse = response;
       if (recievedResponse.ok) return response;
