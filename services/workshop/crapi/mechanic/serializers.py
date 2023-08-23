@@ -56,7 +56,7 @@ class ReceiveReportSerializer(serializers.Serializer):
     Serializer for Receive Report API
     """
     mechanic_code = serializers.CharField()
-    problem_details= serializers.CharField()
+    problem_details = serializers.CharField(max_length=None , allow_blank=True)
     vin = serializers.CharField()
     owner_id = serializers.CharField(required=False)
 
