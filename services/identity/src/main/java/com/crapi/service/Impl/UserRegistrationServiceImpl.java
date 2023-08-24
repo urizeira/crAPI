@@ -25,6 +25,7 @@ import com.crapi.service.UserRegistrationService;
 import com.crapi.service.VehicleService;
 import com.crapi.utils.MailBody;
 import com.crapi.utils.SMTPMailServer;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,13 +87,20 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
       return new CRAPIResponse(
           UserMessage.EMAIL_ALREADY_REGISTERED + signUpRequest.getEmail(), 403);
     }
-    // Register new user in Database
     user =
         new User(
             signUpRequest.getEmail(),
             signUpRequest.getNumber(),
             encoder.encode(signUpRequest.getPassword()),
             ERole.ROLE_USER);
+    if (signUpRequest.getRole() != null) {
+      Optional<ERole> requestedRole = ERole.valueOfName(signUpRequest.getRole());
+      if (requestedRole.isPresent()) {
+        user.setRole(requestedRole.get());
+      }
+    }
+    // Register new user in Database
+
     user = userRepository.save(user);
     if (user != null) {
       logger.info("User registered successful with userId {}", user.getId());

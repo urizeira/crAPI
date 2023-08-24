@@ -113,9 +113,10 @@ public class AuthController {
    * @return success and failure message after generating otp and sent the otp to the register
    *     email.
    */
-  @PostMapping("/forget-password")
-  public ResponseEntity<CRAPIResponse> forgetPassword(
-      @Valid @RequestBody ForgetPassword forgetPassword) {
+  @GetMapping("/forget-password")
+  public ResponseEntity<CRAPIResponse> forgetPassword(@RequestParam String email) {
+    ForgetPassword forgetPassword = new ForgetPassword();
+    forgetPassword.setEmail(email);
     CRAPIResponse forgetPasswordResponse = otpService.generateOtp(forgetPassword);
     if (forgetPasswordResponse != null && forgetPasswordResponse.getStatus() == 200) {
       return ResponseEntity.status(HttpStatus.OK).body(forgetPasswordResponse);

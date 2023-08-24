@@ -40,6 +40,9 @@ public class SignUpForm {
   @Size(max = 15)
   private String number;
 
+  @Size(max = 15)
+  private String role;
+
   public SignUpForm(Long id, String name, String email, String number) {
     this.id = id;
     this.name = name;

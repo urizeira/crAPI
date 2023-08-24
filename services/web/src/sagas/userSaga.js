@@ -18,7 +18,7 @@ import { APIService, requestURLS } from "../constants/APIConstant";
 import actionTypes from "../constants/actionTypes";
 import responseTypes from "../constants/responseTypes";
 import {
-  INVALID_CREDS, SIGN_UP_SUCCESS, SIGN_UP_FAILED, OTP_SENT, OTP_NOT_SENT, OTP_VERIFIED, OTP_NOT_VERIFIED, PASSWORD_CHANGED, PASSWORD_NOT_CHANGED, TOKEN_NOT_SENT, EMAIL_CHANGED, EMAIL_NOT_CHANGED, NO_SERVICES,
+  INVALID_CREDS, SIGN_UP_SUCCESS, SIGN_UP_FAILED, OTP_SENT, OTP_NOT_SENT, OTP_VERIFIED, OTP_NOT_VERIFIED, PASSWORD_CHANGED, PASSWORD_NOT_CHANGED, TOKEN_NOT_SENT, EMAIL_CHANGED, EMAIL_NOT_CHANGED, NO_SERVICES,XML_POST_NOT_CREATED,XML_POST_CREATED
 } from "../constants/messages";
 
 /**
@@ -132,16 +132,16 @@ export function* forgotPassword(param) {
   let recievedResponse = {};
   try {
     yield put({ type: actionTypes.FETCHING_DATA });
-    const postUrl =
-      APIService.JAVA_MICRO_SERVICES + requestURLS.FORGOT_PASSWORD;
+    const getUrl =
+      APIService.JAVA_MICRO_SERVICES + requestURLS.FORGOT_PASSWORD +"?email="+email;
     const headers = {
       "Content-Type": "application/json",
     };
 
-    const responseJSON = yield fetch(postUrl, {
+    const responseJSON = yield fetch(getUrl, {
       headers,
-      method: "POST",
-      body: JSON.stringify({ email }),
+      method: "GET"
+      
     }).then((response) => {
       recievedResponse = response;
       if (recievedResponse.ok) return response;
@@ -353,6 +353,7 @@ export function* getServices(param) {
     callback(responseTypes.FAILURE, NO_SERVICES);
   }
 }
+
 
 export function* userActionWatcher() {
   yield takeLatest(actionTypes.LOG_IN, logIn);

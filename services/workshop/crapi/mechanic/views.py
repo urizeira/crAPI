@@ -16,6 +16,7 @@
 contains all the views related to Mechanic
 """
 import bcrypt
+import traceback
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
@@ -23,6 +24,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db import models
+from django.db.utils import DataError
 from utils.jwt import jwt_auth_required
 from utils import messages
 from user.models import User, Vehicle, UserDetails
@@ -135,13 +137,19 @@ class ReceiveReportView(APIView):
         report_details = serializer.data
         mechanic = Mechanic.objects.get(mechanic_code=report_details['mechanic_code'])
         vehicle = Vehicle.objects.get(vin=report_details['vin'])
-        service_request = ServiceRequest.objects.create(
-            vehicle=vehicle,
-            mechanic=mechanic,
-            problem_details=report_details['problem_details'],
-            created_on=timezone.now()
-        )
-        service_request.save()
+        try:
+            service_request = ServiceRequest.objects.create(
+                vehicle=vehicle,
+                mechanic=mechanic,
+                problem_details=report_details['problem_details'],
+                created_on=timezone.now()
+            )
+            service_request.save()
+        except DataError as e:
+            # Handle the error appropriately for your application
+            error_trace = traceback.format_exc()
+            log_error(request.path, request.data, status.HTTP_400_BAD_REQUEST, error_trace)
+            return Response({'message':error_trace}, status=status.HTTP_400_BAD_REQUEST)
         report_link = "{}?report_id={}".format(reverse("get-mechanic-report"), service_request.id)
         report_link = request.build_absolute_uri(report_link)
         return Response({
