@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 public class OtpServiceImpl implements OtpService {
 
   private static final Logger logger = LoggerFactory.getLogger(OtpServiceImpl.class);
-
+  public static final int OTP_LENGTH = 5;
   @Autowired OtpRepository otpRepository;
 
   @Autowired UserRepository userRepository;
@@ -108,11 +108,11 @@ public class OtpServiceImpl implements OtpService {
         userRepository.save(user);
         otp.setStatus(EStatus.INACTIVE.toString());
         validateOTPResponse = new CRAPIResponse(UserMessage.OTP_VARIFIED_SUCCESS, 200);
-      } else if (otp.getCount() == 9) {
+      } else if (otp.getCount() == OTP_LENGTH) {
         otp.setCount(otp.getCount() + 1);
         invalidateOtp(otp);
         validateOTPResponse = new CRAPIResponse(UserMessage.EXCEED_NUMBER_OF_ATTEMPS, 503);
-      } else if (otp.getCount() > 9) {
+      } else if (otp.getCount() > OTP_LENGTH) {
         otp.setCount(otp.getCount() + 1);
         validateOTPResponse = new CRAPIResponse(UserMessage.ERROR, 500);
         invalidateOtp(otp);

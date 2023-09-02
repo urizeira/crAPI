@@ -1,6 +1,6 @@
 package com.crapi.service.Impl;
 
-import com.crapi.model.Employee;
+import com.crapi.model.CarPart;
 import com.crapi.service.XMLParseService;
 import com.crapi.utils.XMLHandler;
 import java.io.ByteArrayInputStream;
@@ -30,7 +30,7 @@ public class XMLParseServiceImpl implements XMLParseService {
    * @throws IOException if an I/O exception occurs
    */
   @Override
-  public List<Employee> parseXml(String xmlContent)
+  public List<CarPart> parseXml(String xmlContent)
       throws ParserConfigurationException, SAXException, IOException {
 
     SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
@@ -38,10 +38,10 @@ public class XMLParseServiceImpl implements XMLParseService {
     SAXParser saxParser = saxParserFactory.newSAXParser();
     XMLHandler handler = new XMLHandler();
     saxParser.parse(targetStream, handler);
-    List<Employee> empList = handler.getEmpList();
+    List<CarPart> carPartList = handler.getCarPartList();
 
-    logger.info("Employee list size: " + empList.size());
+    logger.info("Employee list size: " + carPartList.size());
 
-    return empList;
+    return carPartList;
   }
 }
