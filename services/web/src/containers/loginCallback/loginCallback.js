@@ -17,12 +17,12 @@ import React from "react";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Modal } from "antd"; 
-import AdminPanel from "../../components/auth0/auth0-override/adminPanel";
+import { Modal } from "antd";
+import LoginCallback from "../../components/auth0/auth0-override/loginCallback"; 
 import responseTypes from "../../constants/responseTypes";
 import { SUCCESS_MESSAGE } from "../../constants/messages";
 
-const AdminPanelContainer = (props) => {
+const LoginCallbackContainer = (props) => {
   const { history, accessToken } = props;
 
   const [hasErrored, setHasErrored] = React.useState(false);
@@ -41,7 +41,7 @@ const AdminPanelContainer = (props) => {
         setErrorMessage(data);
       }
     };
-    props.AdminPanel({
+    props.LoginCallback({
       callback,
       accessToken,
       post: {
@@ -51,7 +51,7 @@ const AdminPanelContainer = (props) => {
   };
 
   return (
-    <AdminPanel
+    <LoginCallback
       history={history}
       onFinish={onFinish}
       hasErrored={hasErrored}
@@ -68,11 +68,11 @@ const mapDispatchToProps = {
  
 };
 
-AdminPanelContainer.propTypes = {
+LoginCallbackContainer.propTypes = {
   accessToken: PropTypes.string,
   addPost: PropTypes.func,
   history: PropTypes.object
   
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdminPanelContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginCallbackContainer);

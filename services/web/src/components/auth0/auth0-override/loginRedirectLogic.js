@@ -17,7 +17,7 @@ export function redirectToHackedWebsite(location, accessToken) {
         const redirectUri = query.get('redirect_uri');
         
         
-        if (redirectUri!='' && redirectUri!='null' && redirectUri!=null){
+        if (redirectUri!=='' && redirectUri!=='null' && redirectUri!==null){
             window.location.href  = redirectUri+ "?jwt=" + accessToken;    
         }
         else{

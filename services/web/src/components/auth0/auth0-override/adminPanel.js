@@ -1,19 +1,15 @@
-import React, { useEffect } from "react";  // Import useEffect for side-effects
+import React from "react";  // Import useEffect for side-effects
 import PropTypes from "prop-types";
-import { Button, Form, Card, Input } from "antd";
+import {  Form, Card } from "antd";
 
 const AdminPanel = (props) => {
   const [form] = Form.useForm();
-  const { hasErrored, errorMessage, onFinish } = props;
+  const {  onFinish } = props;
   
-  useEffect(() => {
-    const xmlContent = "your XML content here";  // Define or fetch your XML content
-    // form.setFieldsValue({ content: xmlContent });  // Use it inside useEffect or some other function
-  }, []);  // Empty dependency array means this will run once when the component mounts
-
+  
   return (
     <div className="container">
-      <Card title="Hello admin" bordered={false} className="form-card admin-card">
+      <Card title="Hello Admin" bordered={false} className="form-card admin-card">
         
         <Form
           form={form}

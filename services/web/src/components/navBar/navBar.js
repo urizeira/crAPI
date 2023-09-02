@@ -36,7 +36,7 @@ const { Header } = Layout;
  * dropdown alos consists the logout button
  */
 const Navbar = (props) => {
-  const { history, logOutUser, isLoggedIn,name, profilePicData, role} = props;
+  const { history, logOutUser, isLoggedIn,name, profilePicData} = props;
   const { logout } = useAuth0(); 
   
   const logoutLocal = () => {
@@ -67,6 +67,7 @@ const Navbar = (props) => {
 
   const takeNavigationAction = (input) => {
     if (input.key === "dashboard") history.push(`/`);
+    if (input.key === "admin-dashboard") history.push(`/admin-dashboard`);
     else if (input.key === "shop") history.push(`/shop`);
     else if (input.key === "forum") history.push(`/forum`)
     else if (input.key === "car-parts") history.push(`/new-xml-post`);
@@ -76,14 +77,16 @@ const Navbar = (props) => {
 
   const menuNavigation = () => (
       <Menu onClick={(key) => takeNavigationAction(key)} mode="horizontal" theme="dark">
-      <Menu.Item key="dashboard">Dashboard</Menu.Item>
-      <Menu.Item key="shop">Shop</Menu.Item>
-      <Menu.Item key="forum">Community</Menu.Item>
-      <Menu.Item key="car-parts">Car Parts Editor</Menu.Item>
+      
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="dashboard">Dashboard</Menu.Item>}
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="shop">Shop</Menu.Item>}
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="forum">Community</Menu.Item>}
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="car-parts">Car Parts Editor</Menu.Item>}
+      {props.role === roleTypes.ROLE_ADMIN && <Menu.Item key="admin-dashboard">Dashboard</Menu.Item>}
       {props.role === roleTypes.ROLE_ADMIN && <Menu.Item key="admin-panel">Admin Panel</Menu.Item>} 
     </Menu>
   );
-  
+  console.log("Role",props.role)
   return (
     <Header>
       <Space className="top-nav-left">
