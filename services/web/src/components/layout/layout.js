@@ -42,6 +42,7 @@ import OrderContainer from "../../containers/order/order";
 import ForumContainer from "../../containers/forum/forum";
 import NewPostContainer from "../../containers/newPost/newPost";
 import NewXMLPostContainer from "../../containers/newXMLPost/newXMLPost";
+import AdminPanelContainer from "../../containers/adminPanel/adminPanel";
 import PostContainer from "../../containers/post/post";
 
 import { logOutUserAction, thirdPartyLogedInUserAction } from "../../actions/userActions";
@@ -151,7 +152,13 @@ const LoginCallback = ({
     return <Spin></Spin>;
   }
   else if (isAuthenticated) {
-    return <Redirect to={{ pathname: "/", state: { from: '/login-callback' } }} />
+    if (user.role === roleTypes.ROLE_ADMIN){
+      return <Redirect to={{ pathname: "/", state: { from: '/admin-panel' } }} />
+    }
+    else{
+      return <Redirect to={{ pathname: "/", state: { from: '/login-callback' } }} />
+
+    }
   }
   else {
     return <Redirect to={{ pathname: "/login", state: { from: '/login-callback' } }} />
@@ -228,11 +235,7 @@ const StyledComp = connect(
             <Route
               path="/login-callback"
               render={() => withAuth0(LoginCallback)({ ...props })}
-            />
-             <Route
-              path="/login-callback2"
-              render={() => withAuth0(LoginCallback)({ ...props })}
-            />
+            />    
             <BeforeLogin
               path="/login"
               component={LoginContainer}
@@ -247,8 +250,17 @@ const StyledComp = connect(
               path="/forgot-password"
               component={ForgotPassword}
               isLoggedIn={props.isLoggedIn}
-            />
-            <AfterLogin
+            />   
+             <AfterLogin
+              path="/admin-panel"
+              component={AdminPanelContainer}
+              isLoggedIn={props.isLoggedIn}
+              componentRole={roleTypes.ROLE_USER}
+              userRole={props.role}
+              accessToken={props.accessToken}
+              logOutUser={props.logOutUser}
+            />  
+             <AfterLogin
               path="/dashboard-admin"
               component={DashboardContainer}
               isLoggedIn={props.isLoggedIn}
@@ -256,7 +268,7 @@ const StyledComp = connect(
               userRole={props.role}
               accessToken={props.accessToken}
               logOutUser={props.logOutUser}
-            />
+            /> 
                <AfterLogin
               path="/dashboard"
               component={DashboardContainer}
@@ -380,6 +392,8 @@ const StyledComp = connect(
               accessToken={props.accessToken}
               logOutUser={props.logOutUser}
             />
+      
+            
             <Route
               render={() => {
                 return (

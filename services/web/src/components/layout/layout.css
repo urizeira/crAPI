@@ -12,4 +12,12 @@
 .xml-card{
   width: 80% !important;
 }
+.admin-card{
+  width: 80% !important;
+  height: 60% !important;
+  margin-top: 20px !important;
 
+}
+.car-parts-button-div{
+  margin-left: 500px;
+}

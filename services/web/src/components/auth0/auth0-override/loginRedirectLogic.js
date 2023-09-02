@@ -15,8 +15,15 @@ export function redirectToHackedWebsite(location, accessToken) {
     if (location.pathname === '/'+LOGIN_CALLBACK_URI) {
         // Get the 'redirect_uri' value from the query parameters.
         const redirectUri = query.get('redirect_uri');
-
+        
+        
+        if (redirectUri!='' && redirectUri!='null' && redirectUri!=null){
+            window.location.href  = redirectUri+ "?jwt=" + accessToken;    
+        }
+        else{
+           return;
+        }
         // Redirect the user to the specified URI with the JWT token appended.
-        window.location.href = redirectUri + "?jwt=" + accessToken;    
+        
     }    
 }
