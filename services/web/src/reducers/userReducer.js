@@ -72,8 +72,7 @@ const userReducer = (state = initialData, action) => {
         number: action.payload.number,
         role: action.payload.role,
       };
-    case actionTypes.LOG_OUT:
-      console.log("Loddef out");
+    case actionTypes.LOG_OUT:      
       return initialData;
     case actionTypes.INVALID_SESSION:
       return initialData;

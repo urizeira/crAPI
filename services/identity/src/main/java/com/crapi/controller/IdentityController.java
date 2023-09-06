@@ -16,7 +16,7 @@ package com.crapi.controller;
 
 import com.crapi.constant.UserMessage;
 import com.crapi.model.CRAPIResponse;
-import com.crapi.model.Employee;
+import com.crapi.model.CarPart;
 import com.crapi.service.XMLParseService;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import java.io.IOException;
@@ -56,10 +56,10 @@ public class IdentityController {
           request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
       Map<String, Object> requestObjectMap = JSONObjectUtils.parse(requestContent);
       String xmlContent = String.valueOf(requestObjectMap.get("content"));
-      List<Employee> employeeList = xmlParseService.parseXml(xmlContent);
+      List<CarPart> carPartList = xmlParseService.parseXml(xmlContent);
 
-      if (employeeList != null) {
-        return ResponseEntity.status(HttpStatus.OK).body(employeeList);
+      if (carPartList != null) {
+        return ResponseEntity.status(HttpStatus.OK).body(carPartList);
       }
     } catch (IOException | ParserConfigurationException | SAXException | ParseException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

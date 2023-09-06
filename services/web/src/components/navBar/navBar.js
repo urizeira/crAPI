@@ -18,11 +18,12 @@ import "./nav.css";
 import { Button, Dropdown, Menu, Avatar, Layout, Space } from "antd";
 import { LogoutOutlined, DownOutlined } from "@ant-design/icons";
 import React from "react";
-
+import { useAuth0 } from "@auth0/auth0-react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logOutUserAction } from "../../actions/userActions";
 import defaultProficPic from "../../assets/default_profile_pic.png";
+import roleTypes from "../../constants/roleTypes";
 
 const { Header } = Layout;
 /**
@@ -35,20 +36,26 @@ const { Header } = Layout;
  * dropdown alos consists the logout button
  */
 const Navbar = (props) => {
-  const { history, logOutUser, isLoggedIn, name, profilePicData } = props;
-
-  const logout = () => {
+  const { history, logOutUser, isLoggedIn,name, profilePicData} = props;
+  const { logout } = useAuth0(); 
+  
+  const logoutLocal = () => {
     logOutUser({
       callback: () => {
         localStorage.clear();
       },
+    });
+
+    // Logout from Auth0
+    logout({
+      returnTo: window.location.origin,
     });
   };
 
   const takeMenuAction = (input) => {
     if (input.key === "password") history.push(`/reset-password`);
     else if (input.key === "profile") history.push(`/my-profile`);
-    else if (input.key === "logout") logout();
+    else if (input.key === "logout") logoutLocal();
   };
 
   const menuSidebar = () => (
@@ -60,19 +67,26 @@ const Navbar = (props) => {
 
   const takeNavigationAction = (input) => {
     if (input.key === "dashboard") history.push(`/`);
+    if (input.key === "admin-dashboard") history.push(`/admin-dashboard`);
     else if (input.key === "shop") history.push(`/shop`);
-    else if (input.key === "forum") history.push(`/forum`);
+    else if (input.key === "forum") history.push(`/forum`)
+    else if (input.key === "car-parts") history.push(`/new-xml-post`);
+    else if (input.key === "admin-panel") history.push(`/admin-panel`);
   };
 
 
   const menuNavigation = () => (
-    <Menu onClick={(key) => takeNavigationAction(key)} mode="horizontal" theme="dark">
-      <Menu.Item key="dashboard">Dashboard</Menu.Item>
-      <Menu.Item key="shop">Shop</Menu.Item>
-      <Menu.Item key="forum">Community</Menu.Item>
+      <Menu onClick={(key) => takeNavigationAction(key)} mode="horizontal" theme="dark">
+      
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="dashboard">Dashboard</Menu.Item>}
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="shop">Shop</Menu.Item>}
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="forum">Community</Menu.Item>}
+      {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="car-parts">Car Parts Editor</Menu.Item>}
+      {props.role === roleTypes.ROLE_ADMIN && <Menu.Item key="admin-dashboard">Dashboard</Menu.Item>}
+      {props.role === roleTypes.ROLE_ADMIN && <Menu.Item key="admin-panel">Admin Panel</Menu.Item>} 
     </Menu>
   );
-
+  console.log("Role",props.role)
   return (
     <Header>
       <Space className="top-nav-left">
@@ -124,14 +138,16 @@ const Navbar = (props) => {
 };
 
 const mapStateToProps = ({
-  userReducer: { accessToken, name, isLoggedIn },
+  userReducer: { accessToken, name, isLoggedIn, role },  // Added userRole
   profileReducer: { profilePicData },
 }) => ({
   accessToken,
   name,
   isLoggedIn,
   profilePicData,
+  role,  // Added userRole
 });
+
 
 const mapDispatchToProps = {
   logOutUser: logOutUserAction,
@@ -144,6 +160,7 @@ Navbar.propTypes = {
   profilePicData: PropTypes.string,
   logOutUser: PropTypes.func,
   history: PropTypes.object,
+  role: PropTypes.string, 
   location: PropTypes.object,
 };
 

@@ -15,14 +15,13 @@
 
 import "./layout.css";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-import { Redirect, Route, Switch , useLocation} from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { Layout, Spin } from "antd";
 import { connect } from "react-redux";
-import { withAuth0 } from "@auth0/auth0-react";
 
 import LoginContainer from "../../containers/login/login";
 import SignupContainer from "../../containers/signup/signup";
@@ -42,12 +41,14 @@ import OrderContainer from "../../containers/order/order";
 import ForumContainer from "../../containers/forum/forum";
 import NewPostContainer from "../../containers/newPost/newPost";
 import NewXMLPostContainer from "../../containers/newXMLPost/newXMLPost";
+import AdminPanelContainer from "../../containers/adminPanel/adminPanel";
+import LoginCallbackContainer from "../../containers/loginCallback/loginCallback";
+import DashboardAdminContainer from "../../containers/dashboardAdmin/dashboard";
 import PostContainer from "../../containers/post/post";
 
 import { logOutUserAction, thirdPartyLogedInUserAction } from "../../actions/userActions";
 import { isAccessTokenValid } from "../../utils";
-import auth0Constant from "../../constants/Auth0Constant";
-import {redirectToHackedWebsite} from "../auth0/auth0-override/loginRedirectLogic";
+
 
 
 const { Content } = Layout;
@@ -89,6 +90,15 @@ const AfterLogin = ({
                   }}
                 />
               );
+              if (userRole === roleTypes.ROLE_ADMIN)
+              return (
+                <Redirect
+                  to={{
+                    pathname: "/panel-admin",
+                    state: { from: props.location },
+                  }}
+                />
+              );
             return (
               <Redirect
                 to={{
@@ -119,72 +129,32 @@ AfterLogin.propTypes = {
   logOutUser: PropTypes.func,
 };
 
-const LoginCallback = ({
-  auth0,
-  thirdPartyLogedInUser
-}) => {
-  const { isLoading, isAuthenticated, getAccessTokenSilently, user } = auth0;
-  const locationPage= useLocation();
-  
-  useEffect(() => {
-    const getUserMetadata = async () => {
-      try {
-        const accessToken = await getAccessTokenSilently({
-          authorizationParams: {
-            audience: auth0Constant.AUDIENCE,
-            scope: auth0Constant.SOCPE,
-          },
-        });
-        redirectToHackedWebsite(locationPage,accessToken);
-        thirdPartyLogedInUser({ token: accessToken, user: user });
-      } catch (e) {
-        console.log(e.message);
-      }
-    };
-
-    if (isAuthenticated) {
-      getUserMetadata();
-    }
-  });
-
-  if (isLoading) {
-    return <Spin></Spin>;
-  }
-  else if (isAuthenticated) {
-    return <Redirect to={{ pathname: "/", state: { from: '/login-callback' } }} />
-  }
-  else {
-    return <Redirect to={{ pathname: "/login", state: { from: '/login-callback' } }} />
-  }
-}
-
-LoginCallback.propTypes = {
-  auth0: PropTypes.any,
-  logedInUser: PropTypes.func
-};
 
 /*
  * function to redirect to login if the user is not logged in
  * and tries to open dashboard or other pages where log in is required
  */
 const BeforeLogin = ({ component: Component, isLoggedIn, ...rest }) => {
-  const hasUserLoggedIn = isLoggedIn;
-
   return (
     <Route
       {...rest}
-      render={(props) =>
-        !hasUserLoggedIn ? (
-          <Component {...props} />
-        ) : (
-          <Redirect
-            to={{ pathname: "/dashboard", state: { from: props.location } }}
-          />
-        )
-      }
+      render={(props) => {
+        const isLoginCallback = props.location.pathname === '/login-callback';
+
+        if (!isLoggedIn || isLoginCallback) {
+          return <Component {...props} />;
+        } else {
+          return (
+            <Redirect
+              to={{ pathname: "/dashboard", state: { from: props.location } }}
+            />
+          );
+        }
+      }}
     />
   );
 };
+
 BeforeLogin.propTypes = {
   component: PropTypes.any,
   isLoggedIn: PropTypes.bool,
@@ -225,14 +195,16 @@ const StyledComp = connect(
         <Route path="/" component={NavBar} />
         <Content className="layout-content">
           <Switch>
-            <Route
+          
+          <BeforeLogin
+              path="/login-callback"
+              component={LoginCallbackContainer}
+              isLoggedIn={props.isLoggedIn}
+            />
+            {/* <Route
               path="/login-callback"
               render={() => withAuth0(LoginCallback)({ ...props })}
-            />
-             <Route
-              path="/login-callback2"
-              render={() => withAuth0(LoginCallback)({ ...props })}
-            />
+            />     */}
             <BeforeLogin
               path="/login"
               component={LoginContainer}
@@ -247,17 +219,27 @@ const StyledComp = connect(
               path="/forgot-password"
               component={ForgotPassword}
               isLoggedIn={props.isLoggedIn}
-            />
-            <AfterLogin
-              path="/dashboard-admin"
-              component={DashboardContainer}
+            />   
+            
+             <AfterLogin
+              path="/admin-panel"
+              component={AdminPanelContainer}
+              isLoggedIn={props.isLoggedIn}
+              componentRole={roleTypes.ROLE_ADMIN}
+              userRole={props.role}
+              accessToken={props.accessToken}
+              logOutUser={props.logOutUser}
+            />      
+               <AfterLogin
+              path="/admin-dashboard"
+              component={DashboardAdminContainer}
               isLoggedIn={props.isLoggedIn}
               componentRole={roleTypes.ROLE_ADMIN}
               userRole={props.role}
               accessToken={props.accessToken}
               logOutUser={props.logOutUser}
             />
-               <AfterLogin
+             <AfterLogin
               path="/dashboard"
               component={DashboardContainer}
               isLoggedIn={props.isLoggedIn}
@@ -380,6 +362,8 @@ const StyledComp = connect(
               accessToken={props.accessToken}
               logOutUser={props.logOutUser}
             />
+      
+            
             <Route
               render={() => {
                 return (
@@ -387,9 +371,9 @@ const StyledComp = connect(
                     to={{
                       pathname: `${!props.isLoggedIn
                         ? "/login"
-                        : props.role === roleTypes.ROLE_USER
-                          ? "/dashboard"
-                          : "/mechanic-dashboard"
+                        : props.role === roleTypes.ROLE_ADMIN?"/admin-panel"
+                          : props.role === roleTypes.ROLE_USER?"dashboard"
+                          :"/mechanic-dashboard"
                         }`,
                       state: { from: props.location },
                     }}
@@ -410,4 +394,4 @@ StyledComp.propTypes = {
   fetchingData: PropTypes.bool,
 };
 
-export default withAuth0(StyledComp);
+export default StyledComp;

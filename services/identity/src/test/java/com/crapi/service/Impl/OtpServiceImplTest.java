@@ -14,6 +14,8 @@
 
 package com.crapi.service.Impl;
 
+import static com.crapi.service.Impl.OtpServiceImpl.OTP_LENGTH;
+
 import com.crapi.constant.UserMessage;
 import com.crapi.entity.Otp;
 import com.crapi.entity.User;
@@ -133,11 +135,11 @@ public class OtpServiceImplTest {
   }
 
   @Test
-  public void secureValidateOtpFailsWithInvalidOtpWhenOtpCountIs9() {
+  public void secureValidateOtpFailsWithInvalidOtpWhenOtpCountIs4() {
     Otp otp = getDummyOtp();
     User user = getDummyUser();
     OtpForm otpForm = getDummyOtpForm();
-    otp.setCount(9);
+    otp.setCount(OTP_LENGTH);
     Mockito.when(userRepository.findByEmail(Mockito.anyString())).thenReturn(user);
     Mockito.when(otpRepository.findByUser(Mockito.any())).thenReturn(otp);
     CRAPIResponse crapiAPIResponse = otpService.secureValidateOtp(otpForm);
@@ -148,11 +150,11 @@ public class OtpServiceImplTest {
   }
 
   @Test
-  public void secureValidateOtpFailsWithInvalidOtpWhenOtpCountIsGreaterThan9() {
+  public void secureValidateOtpFailsWithInvalidOtpWhenOtpCountIsGreaterThan4() {
     Otp otp = getDummyOtp();
     User user = getDummyUser();
     OtpForm otpForm = getDummyOtpForm();
-    otp.setCount(10);
+    otp.setCount(OTP_LENGTH + 1);
     Mockito.when(userRepository.findByEmail(Mockito.anyString())).thenReturn(user);
     Mockito.when(otpRepository.findByUser(Mockito.any())).thenReturn(otp);
     CRAPIResponse crapiAPIResponse = otpService.secureValidateOtp(otpForm);

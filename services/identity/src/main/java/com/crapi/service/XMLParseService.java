@@ -1,6 +1,6 @@
 package com.crapi.service;
 
-import com.crapi.model.Employee;
+import com.crapi.model.CarPart;
 import java.io.IOException;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -8,6 +8,6 @@ import org.xml.sax.SAXException;
 
 public interface XMLParseService {
 
-  List<Employee> parseXml(String xmlContent)
+  List<CarPart> parseXml(String xmlContent)
       throws ParserConfigurationException, SAXException, IOException;
 }

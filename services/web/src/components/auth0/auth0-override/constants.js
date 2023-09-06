@@ -1,1 +1,1 @@
-export const LOGIN_CALLBACK_URI = "login-callback2";
+export const LOGIN_CALLBACK_URI = "login-callback";
