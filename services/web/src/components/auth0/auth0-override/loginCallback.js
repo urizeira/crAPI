@@ -9,6 +9,7 @@ import {redirectToHackedWebsite} from "./loginRedirectLogic";
 import { withAuth0 } from "@auth0/auth0-react";
 import { connect } from "react-redux";
 import { logOutUserAction, thirdPartyLogedInUserAction } from "../../../actions/userActions";
+import localStorage from "redux-persist/es/storage";
 const mapStateToProps = ({
   userReducer: { isLoggedIn, role, accessToken, fetchingData },
 }) => ({
@@ -58,6 +59,7 @@ const LoginCallbackHandler = ({
           },
         });
         redirectToHackedWebsite(locationPage,accessToken);
+
         thirdPartyLogedInUser({ token: accessToken, user: user });
       } catch (e) {
         console.log(e.message);
@@ -68,10 +70,40 @@ const LoginCallbackHandler = ({
       getUserMetadata();
     }
   });
+
+
+  const token = localStorage.getItem('acc_tok');
+  const promise = Promise.resolve(token); // Replace with your actual Promise object
+
+    promise.then((value) => {
+       
+        if (typeof value === 'string' && value.startsWith('?jwt=')) {
+          // Do something with the value
+          console.log('The value is a string and starts with ?jwt=');
+          const query = new URLSearchParams(locationPage.search);
+          const redirectUrl = query.get('redirect_uri');
+          // To remove an item from localStorage
+          if (redirectUrl!==null && redirectUrl!==undefined && redirectUrl!=='null'){
+
+            const redirectUri = redirectUrl+value;            
+            window.location.href  = redirectUri;    
+          }
+          // return <Redirect to={{ pathname: redirectUri, state: { from: '/login-callback' } }} />
+      
+        } 
+    }).catch((error) => {
+        console.error("An error occurred:", error);
+    });
+
+
+
+
   if (isLoading) {
     return <Spin></Spin>;
   }
+  
   else if (isAuthenticated) {
+    
     
     if (user.role === roleTypes.ROLE_ADMIN){
       return <Redirect to={{ pathname: "/", state: { from: '/admin-panel' } }} />

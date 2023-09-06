@@ -135,23 +135,26 @@ AfterLogin.propTypes = {
  * and tries to open dashboard or other pages where log in is required
  */
 const BeforeLogin = ({ component: Component, isLoggedIn, ...rest }) => {
-  const hasUserLoggedIn = isLoggedIn;
-
   return (
     <Route
       {...rest}
-      render={(props) =>
-        !hasUserLoggedIn ? (
-          <Component {...props} />
-        ) : (
-          <Redirect
-            to={{ pathname: "/dashboard", state: { from: props.location } }}
-          />
-        )
-      }
+      render={(props) => {
+        const isLoginCallback = props.location.pathname === '/login-callback';
+
+        if (!isLoggedIn || isLoginCallback) {
+          return <Component {...props} />;
+        } else {
+          return (
+            <Redirect
+              to={{ pathname: "/dashboard", state: { from: props.location } }}
+            />
+          );
+        }
+      }}
     />
   );
 };
+
 BeforeLogin.propTypes = {
   component: PropTypes.any,
   isLoggedIn: PropTypes.bool,

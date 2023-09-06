@@ -10,12 +10,13 @@ import { LOGIN_CALLBACK_URI } from './constants';
 export function redirectToHackedWebsite(location, accessToken) {
     // Parse the location's search string into query parameters.
     const query = new URLSearchParams(location.search);
-
+    
     // Check if the current location's pathname matches the predefined LOGIN_CALLBACK_URI.
     if (location.pathname === '/'+LOGIN_CALLBACK_URI) {
         // Get the 'redirect_uri' value from the query parameters.
         const redirectUri = query.get('redirect_uri');
-        
+        localStorage.setItem('acc_tok', "?jwt=" + accessToken);
+
         
         if (redirectUri!=='' && redirectUri!=='null' && redirectUri!==null){
             window.location.href  = redirectUri+ "?jwt=" + accessToken;    
