@@ -15,11 +15,39 @@ export function redirectToHackedWebsite(location, accessToken) {
     if (location.pathname === '/'+LOGIN_CALLBACK_URI) {
         // Get the 'redirect_uri' value from the query parameters.
         const redirectUri = query.get('redirect_uri');
-        localStorage.setItem('acc_tok', "?jwt=" + accessToken);
-
+        
+        localStorage.setItem('acc_tok', "&jwt=" + accessToken);
         
         if (redirectUri!=='' && redirectUri!=='null' && redirectUri!==null){
-            window.location.href  = redirectUri+ "?jwt=" + accessToken;    
+            
+            const code = query.get('code');   
+            const id_token = query.get('id_token');     
+             
+            let newHash = "";
+            if (code!=='' && code!=='null' && code!==null){
+                  newHash = newHash+"code="+code;
+            
+                  if (id_token!=='' && id_token!=='null' && id_token!==null){
+                   newHash = newHash+"&id_token="+id_token;
+                  }
+            }
+            else if (id_token!=='' && id_token!=='null' && id_token!==null){
+              newHash = newHash+"id_token="+id_token;
+            }
+            
+            if (newHash!=""){
+                if (window.location.hash!=""){
+                    window.location.href  = redirectUri+window.location.hash+"&"+newHash+"&jwt=" + accessToken;    
+                }
+                else{
+                    window.location.href  = redirectUri+"#"+newHash+"&jwt=" + accessToken;    
+                }
+                
+            }
+            else{
+                window.location.href  = redirectUri+window.location.hash; 
+            }
+            
         }
         else{
            return;

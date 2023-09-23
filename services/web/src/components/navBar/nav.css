@@ -15,9 +15,12 @@
   font-weight: 600;
   color: white;
 }
-
+.admin-panel-link{
+  font-weight: bold !important;
+  color: wheat !important;
+}
 .avatar {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   cursor: pointer;
 }
 

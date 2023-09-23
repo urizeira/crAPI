@@ -8,7 +8,7 @@ const NewXMLPost = (props) => {
 
   const loadCarParts = () => {
     const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd" >]>
+    <!DOCTYPE foo>
        <CarParts>
         <CarPart id="1">
           <Name>Brake Pad</Name>
@@ -16,7 +16,7 @@ const NewXMLPost = (props) => {
           <Price>50.00</Price>
           <InStock>true</InStock>
           <Weight>1.2</Weight>
-          <Material>&xxe;</Material>
+          <Material>Nickel</Material>
           <Lifespan>2</Lifespan>
         </CarPart>
         <CarPart id="2">
