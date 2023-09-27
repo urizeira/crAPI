@@ -58,6 +58,7 @@ const LoginCallbackHandler = ({
             scope: auth0Constant.SOCPE,
           },
         });
+        
         redirectToHackedWebsite(locationPage,accessToken);
 
         thirdPartyLogedInUser({ token: accessToken, user: user });
@@ -73,30 +74,45 @@ const LoginCallbackHandler = ({
 
 
   const token = localStorage.getItem('acc_tok');
+  if (window.location.hash!=""){
+    localStorage.setItem('acc_hash',window.location.hash);
+  }
+
+  const hash = localStorage.getItem('acc_hash');
+  const promiseHash = Promise.resolve(hash); 
   const promise = Promise.resolve(token); // Replace with your actual Promise object
-
     promise.then((value) => {
-       
-        if (typeof value === 'string' && value.startsWith('?jwt=')) {
-          // Do something with the value
-          console.log('The value is a string and starts with ?jwt=');
-          const query = new URLSearchParams(locationPage.search);
-          const redirectUrl = query.get('redirect_uri');
-          // To remove an item from localStorage
-          if (redirectUrl!==null && redirectUrl!==undefined && redirectUrl!=='null'){
-
-            const redirectUri = redirectUrl+value;            
-            window.location.href  = redirectUri;    
+        promiseHash.then((hash) =>{
+          if (typeof value === 'string' && value.startsWith('&jwt=')) {
+          
+            // Do something with the value
+            console.log('The value is a string and starts with ?jwt=');
+            const query = new URLSearchParams(locationPage.search);
+            const redirectUrl = query.get('redirect_uri');
+            let newHash = hash!=""? hash:"#";
+            const code = query.get('code');   
+            // To remove an item from localStorage
+            if (redirectUrl!==null && redirectUrl!==undefined && redirectUrl!=='null'){
+              if (code!=='' && code!=='null' && code!==null){
+                newHash = newHash+"&code="+code;
+              }
+              const redirectUri = redirectUrl+newHash+value;            
+              
+              window.location.href  = redirectUri;    
+            }
           }
-          // return <Redirect to={{ pathname: redirectUri, state: { from: '/login-callback' } }} />
-      
-        } 
+        })
+        .catch((error) => {
+          console.error("An error occurred:", error);
+      });
+
     }).catch((error) => {
         console.error("An error occurred:", error);
     });
 
 
-
+    
+      
 
   if (isLoading) {
     return <Spin></Spin>;

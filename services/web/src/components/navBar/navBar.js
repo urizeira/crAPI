@@ -42,14 +42,13 @@ const Navbar = (props) => {
   const logoutLocal = () => {
     logOutUser({
       callback: () => {
+      
         localStorage.clear();
+        
       },
     });
 
-    // Logout from Auth0
-    logout({
-      returnTo: window.location.origin,
-    });
+  
   };
 
   const takeMenuAction = (input) => {
@@ -82,11 +81,10 @@ const Navbar = (props) => {
       {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="shop">Shop</Menu.Item>}
       {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="forum">Community</Menu.Item>}
       {props.role !== roleTypes.ROLE_ADMIN && <Menu.Item key="car-parts">Car Parts Editor</Menu.Item>}
-      {props.role === roleTypes.ROLE_ADMIN && <Menu.Item key="admin-dashboard">Dashboard</Menu.Item>}
-      {props.role === roleTypes.ROLE_ADMIN && <Menu.Item key="admin-panel">Admin Panel</Menu.Item>} 
+      {props.role === roleTypes.ROLE_ADMIN && <Menu.Item key="admin-panel" className="admin-panel-link">Admin Panel</Menu.Item>} 
     </Menu>
   );
-  console.log("Role",props.role)
+  
   return (
     <Header>
       <Space className="top-nav-left">

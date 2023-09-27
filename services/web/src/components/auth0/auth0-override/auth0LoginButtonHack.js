@@ -3,7 +3,7 @@ import { withAuth0 } from "@auth0/auth0-react";
 import { LOGIN_CALLBACK_URI } from './constants';
 class Auth0LoginButtonHack extends React.Component {
   render() {
-    const customedRedirectUri = `${window.location.origin}/${LOGIN_CALLBACK_URI}?redirect_uri=http://attacker.url.com`;  
+    const customedRedirectUri = `${window.location.origin}/${LOGIN_CALLBACK_URI}?redirect_uri=http://attacker.url.com#id_token=kk`;  
   
     const { loginWithRedirect } = this.props.auth0;
 

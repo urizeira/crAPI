@@ -10,7 +10,7 @@ class Auth0LoginButton extends React.Component {
       <button
         className="btn btn-primary btn-block"        
         onClick={() => loginWithRedirect()}>  
-        Continue with Auth0
+        Continue with Google
       </button>
     );
   }
