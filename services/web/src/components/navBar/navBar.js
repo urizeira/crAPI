@@ -60,7 +60,7 @@ const Navbar = (props) => {
   const menuSidebar = () => (
     <Menu onClick={(key) => takeMenuAction(key)}>
       <Menu.Item key="password">Change Password</Menu.Item>
-      <Menu.Item key="logout"><LogoutOutlined /> sXLogout</Menu.Item>
+      <Menu.Item key="logout"><LogoutOutlined /> Logout</Menu.Item>
     </Menu>
   );
 
